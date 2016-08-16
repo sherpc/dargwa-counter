@@ -10,7 +10,7 @@
 (defn on-readed
   [e]
   (let [text (-> e .-target .-result)]
-    (swap! app assoc :raw-text (apply str (take 300 text)))))
+    (swap! app assoc :tales (p/extract-tales text))))
 
 (defn put-upload
   [e]
@@ -47,10 +47,16 @@
    [:h1 "Dargwa language counter app"]
    [:p [upload-btn file-name]]])
 
+(defn debug-state
+  []
+  [:pre
+   {:style {:white-space "pre-wrap"}}
+   (with-out-str (cljs.pprint/pprint @app))])
+
 (defn home-page []
   [:div.container
    [header (:file-name @app)]
-   [:pre {:style {:white-space "pre-wrap"}}(str @app)]])
+   [debug-state]])
 
 ;; -------------------------
 ;; Initialize app

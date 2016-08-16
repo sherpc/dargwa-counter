@@ -41,3 +41,18 @@
   (->> text
        s/split-lines
        (map parse-line)))
+
+(defn ->to-tale
+  [[name raw-author & lines]]
+  {:name (s/trim name)
+   :author (s/trim raw-author)
+   :text-lines lines})
+
+(defn extract-tales
+  [text]
+  (->> text
+       s/split-lines
+       (partition-by s/blank?)
+       (remove #(every? s/blank? %))
+       (map ->to-tale)
+       (take 3)))
