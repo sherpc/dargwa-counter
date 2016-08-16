@@ -1,5 +1,6 @@
 (ns dargwa-counter.parser
-  (:require [clojure.string :as s]))
+  (:require [clojure.string :as s]
+            [dargwa-counter.db :as db]))
 
 (defn clean-line
   [l]
@@ -52,7 +53,9 @@
   [text]
   (->> text
        s/split-lines
+       (remove #(s/starts-with? % "["))
        (partition-by s/blank?)
        (remove #(every? s/blank? %))
        (map ->to-tale)
-       (take 3)))
+       ;;(take 3)
+       (db/->ids-hash-map)))

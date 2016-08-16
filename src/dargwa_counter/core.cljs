@@ -1,7 +1,8 @@
 (ns dargwa-counter.core
   (:require [reagent.core :as reagent :refer [atom]]
             [ajax.core :refer [GET]]
-            [dargwa-counter.parser :as p]))
+            [dargwa-counter.parser :as p]
+            [dargwa-counter.db :as db]))
 ;; -------------------------
 ;; Db
 (def default-state {})
@@ -10,7 +11,9 @@
 (defn on-readed
   [e]
   (let [text (-> e .-target .-result)]
-    (swap! app assoc :tales (p/extract-tales text))))
+    (swap! app assoc
+           :tales (p/extract-tales text)
+           :current-tale-index 0)))
 
 (defn put-upload
   [e]
@@ -25,6 +28,10 @@
 (defn clean-file
   []
   (reset! app default-state))
+
+(defn set-current-tale-index
+  [id]
+  (swap! app assoc :current-tale-index id))
 ;; -------------------------
 ;; Views
 
@@ -49,13 +56,54 @@
 
 (defn debug-state
   []
-  [:pre
-   {:style {:white-space "pre-wrap"}}
-   (with-out-str (cljs.pprint/pprint @app))])
+  [:div
+   #_[:pre
+    {:style {:white-space "pre-wrap"}}
+    (with-out-str (cljs.pprint/pprint (get (:tales @app) (:current-tale-index @app))))
+    ]
+   [:pre
+    {:style {:white-space "pre-wrap"}}
+    (with-out-str (cljs.pprint/pprint (dissoc @app :tales)))]])
+
+(defn tales-menu
+  [tales current-tale-index]
+  [:div.list-group
+   (for [{:keys [id name]} tales
+         :let [is-active? (= id current-tale-index)]]
+     ^{:key id}
+     [:a.list-group-item
+      {:class (when is-active? "active")
+       :on-click #(set-current-tale-index id)}
+      name])])
+
+(defn tale-header-component
+  [{:keys [name author]}]
+  [:div
+   [:h3 name]
+   [:h5 author]
+   [:p "tale stats"]])
+
+(defn tale-component
+  [{:keys [text-lines]}]
+  [:p (count text-lines) " lines"])
+
+(defn tales-component
+  [app]
+  (let [tales (db/list-tales app)
+        current-tale (db/get-current-tale app)]
+    (when (seq tales)
+      [:div
+       [:div.row
+        [:div.col-md-4 [tales-menu tales (:current-tale-index app)]]
+        [:div.col-md-8 [tale-header-component current-tale]]]
+       [:div.row
+        [:div.col-md-12
+         [tale-component current-tale]]]])))
 
 (defn home-page []
   [:div.container
    [header (:file-name @app)]
+   [tales-component @app]
    [debug-state]])
 
 ;; -------------------------
