@@ -1,6 +1,12 @@
 (ns dargwa-counter.parser
   (:require [clojure.string :as s]
+            [schema.core :as sc
+             :include-macros true]
             [dargwa-counter.db :as db]))
+
+(comment (sc/set-fn-validation! true))
+
+;; Text
 
 (defn clean-line
   [l]
@@ -28,8 +34,6 @@
       count
       (>= 3)))
 
-(only-not-blank [" " "asd" "   "])
-
 (defn parse-line
   [l]
   (let [line (clean-line l)]
@@ -42,6 +46,8 @@
   (->> text
        s/split-lines
        (map parse-line)))
+
+;; Tales
 
 (defn ->to-tale
   [[name raw-author & lines]]
@@ -59,3 +65,22 @@
        (map ->to-tale)
        ;;(take 3)
        (db/->ids-hash-map)))
+
+
+;; Words
+
+(def predicate-marks #{":pf" ":ipf"})
+
+(defn part-of-speech
+  [translation]
+  (if (some #(s/includes? translation %) predicate-marks)
+    :predicate
+    :unknown))
+
+(sc/defn word :- db/Word
+  [dargwa translation pos sentence]
+  {:dargwa dargwa
+   :translation translation
+   :position pos
+   :part-of-speech (part-of-speech translation)
+   :sentence-id sentence})

@@ -2,6 +2,7 @@
   (:require [reagent.core :as reagent :refer [atom]]
             [ajax.core :refer [GET]]
             [dargwa-counter.parser :as p]
+            [dargwa-counter.tests :as dc-tests]
             [dargwa-counter.db :as db]))
 ;; -------------------------
 ;; Db
@@ -77,15 +78,12 @@
       name])])
 
 (defn tale-header-component
-  [{:keys [name author]}]
+  [{:keys [name author text-lines]}]
   [:div
    [:h3 name]
    [:h5 author]
-   [:p "tale stats"]])
-
-(defn tale-component
-  [{:keys [text-lines]}]
-  [:p (count text-lines) " lines"])
+   [:ul
+    [:li "Lines: " (count text-lines)]]])
 
 (defn tales-component
   [app]
@@ -96,9 +94,7 @@
        [:div.row
         [:div.col-md-4 [tales-menu tales (:current-tale-index app)]]
         [:div.col-md-8 [tale-header-component current-tale]]]
-       [:div.row
-        [:div.col-md-12
-         [tale-component current-tale]]]])))
+       ])))
 
 (defn home-page []
   [:div.container
