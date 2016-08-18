@@ -116,10 +116,15 @@
       (throw (str "In sentence '" (s/join "||||" d-words) "' and translation '" russian "' different words count." ))
       (map word d-words r-words ids))))
 
+(defn concat-words
+  [words]
+  (->> (apply concat words)
+       (map-indexed (fn [id w] (assoc w :position id)))))
+
 (defn make-sentence
   [ln {:keys [words]} translation]
   {:id ln
-   :words words
+   :words (concat-words words)
    :translation translation})
 
 

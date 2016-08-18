@@ -29,11 +29,12 @@
 (assert (p/is-dargwa? (first input-lines)))
 (assert (not (p/is-dargwa? (second input-lines))))
 
-(def initial {:current {:ln 0} :result []})
+(def initial {:current {:ln 0 :words []} :result []})
 (def parsed (p/add-line initial (first input-lines)))
 
 (log parsed)
 (log (p/add-line parsed (nth input-lines 1)))
+(log (reduce p/add-line initial input-lines))
 
 (.info js/console "All tests passed.")
 
