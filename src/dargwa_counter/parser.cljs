@@ -4,6 +4,8 @@
              :include-macros true]
             [dargwa-counter.db :as db]))
 
+(def punctuation-marks #{"," "–" "-" "."})
+
 (comment (sc/set-fn-validation! true))
 
 ;; Text
@@ -77,10 +79,67 @@
     :predicate
     :unknown))
 
-(sc/defn word :- db/Word
-  [dargwa translation pos sentence]
+(defn word
+  [dargwa translation pos]
   {:dargwa dargwa
    :translation translation
    :position pos
-   :part-of-speech (part-of-speech translation)
-   :sentence-id sentence})
+   :part-of-speech (part-of-speech translation)})
+
+(defn char->int
+  [c]
+  (.charCodeAt c 0))
+
+(defn char-range
+  [start end]
+  (map char (range (char->int start) (inc (char->int end)))))
+
+(def russian-lower-letters (char-range \а \я))
+(def russian-upper-letters (char-range \А \Я))
+(def russian-letters (set (concat russian-lower-letters russian-upper-letters)))
+
+(defn is-dargwa?
+  [s]
+  (not (some russian-letters s)))
+
+(defn split-sentence-to-words
+  [dargwa russian]
+  (let [d-words (->>
+                 (s/split dargwa #" ")
+                 (map s/trim)
+                 (remove punctuation-marks))
+        r-words (s/split russian #" ")
+        d-c (count d-words)
+        r-c (count r-words)
+        ids (range d-c)]
+    (if (not= d-c r-c)
+      (throw (str "In sentence '" (s/join "||||" d-words) "' and translation '" russian "' different words count." ))
+      (map word d-words r-words ids))))
+
+(defn make-sentence
+  [ln {:keys [words]} translation]
+  {:id ln
+   :words words
+   :translation translation})
+
+
+(defn add-line
+  [{:keys [current result] :as state} line]
+  (let [{:keys [ln]} current
+        pl (parse-line line)
+        sentence (:sentence pl)
+        dargwa? (is-dargwa? sentence)]
+    ;; Если даргинский, просто добавим предложение в текущее состояние
+    (if dargwa?
+      (assoc-in state [:current :dargwa] sentence)
+      ;; Иначе нам надо посмотреть, заполнена даргинская часть, или нет
+      ;; Если да -- делаем из неё и текущей русской слова
+      ;; Если нет -- значит записываем литературный перевод и отправляем предложение в result
+      (if (:dargwa current)
+        (-> state
+            (assoc-in [:current :dargwa] nil)
+            (update-in [:current :words] conj (split-sentence-to-words (:dargwa current) sentence)))
+        (-> state
+            (assoc :current {:ln (inc ln) :words []})
+            (update-in [:result] conj (make-sentence ln current sentence)))))))
+
