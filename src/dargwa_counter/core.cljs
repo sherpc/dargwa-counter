@@ -65,6 +65,7 @@
 (defn header
   [file-name]
   [:div.page-header
+   {:style {:margin-top 0}}
    [:h1 "Dargwa language counter app"]
    [:p.pull-left [upload-btn file-name]]
    [:div.pull-right
@@ -105,13 +106,53 @@
    [:h3 {:style {:margin-top 0}} (str name " (" (count text-lines) " предложений)")]
    [:h5 author]])
 
+(defn words-component
+  [words]
+  [:table.table.table-bordered.table-words
+   [:thead
+    [:tr
+     (for [{:keys [dargwa part-of-speech position]} words]
+       ^{:key position}
+       [:th
+        {:class (when (= part-of-speech :predicate) "m-predicate")}
+        dargwa]
+       )]]
+   [:tbody
+    [:tr
+     (for [{:keys [translation part-of-speech position]} words]
+       ^{:key position}
+       [:td
+        {:class (when (= part-of-speech :predicate) "m-predicate")}
+        translation]
+       )]]])
+
+(defn marks-component
+  [marks]
+  [:ul.b-marks
+   (for [{:keys [pronoun referent]} marks]
+     ^{:key (str pronoun referent)}
+     [:li (str "(" pronoun ", " referent ")")])])
+
 (defn tale-editor
   [{:keys [name author text-lines]}]
-  [:table.table.table-bordered>tbody
-   (for [{:keys [id words marks translation]} text-lines]
-     ^{:key id}
-     [:tr
-      [:td translation]])])
+  [:table.table
+   {:style {:table-layout "fixed"}}
+   [:thead
+    [:tr
+     [:th 
+      {:style {:width "200px"}}
+      "Отметки"]
+     [:th "Слова и полный перевод"]]]
+   [:tbody
+    (for [{:keys [id words marks translation]} text-lines]
+      ^{:key id}
+      [:tr
+       [:td
+        [marks-component marks]]
+       [:td
+        [:div
+         [words-component words]
+         translation]]])]])
 
 (defn tales-component
   [app]

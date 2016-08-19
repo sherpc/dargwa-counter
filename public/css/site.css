@@ -1,3 +1,18 @@
 body {
   font-family: Muli,"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
+
+.m-predicate {
+    font-style: italic;
+}
+
+.table-words {
+}
+
+div.b-words {
+    overflow-x: scroll;
+}
+
+ul.b-marks {
+    width: 150px;
+}

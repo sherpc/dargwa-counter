@@ -23,7 +23,7 @@
         referent (nth cols 3 (seq line))
         is-not-full? (or (s/blank? pronoun) (s/blank? referent))]
     {:sentence (nth cols 0)
-     :mark (when-not is-not-full? {:pronoun pronoun :referent :referent})
+     :mark (when-not is-not-full? {:pronoun pronoun :referent referent})
      }))
 
 (defn only-not-blank
