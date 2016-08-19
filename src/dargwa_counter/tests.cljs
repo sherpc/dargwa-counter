@@ -35,9 +35,26 @@
 ;;(log (p/add-line parsed (nth input-lines 1)))
 ;;(log (p/parse-text input-lines))
 
-(def bug-text "(8) b≡uc-a, – r≡ikʼ-u-le=sa≡r, – ʕaˁcːe hi.ž	этот	хиз	абаз	иг	эмф	отдать		
-n=хватать:pf-imp f≡говорить:ipf-prs-conv=cop≡f ты: inter(lat) этот	 	 	 					
-«Возьми, — говорит, — его себе».	 	")
+(def bug-text "(1)[subj(m) [ca-jna malla nasratːin qʼaqʼa-le-ħe-r-ka qʼ˳-an-ne le≡w-le],	 	ne	 		две иг		n1	
+один-mult Мулла Насреддин улица-obl-in-el-down идти:ipf-prs-adv exst≡m-conv	 	 	 					
+ ca admi [0m-abs 0n-erg hitːi-w≡aʁ-ib-le [0m-abs w≡irχu-le=wan]]	 	le	 				0.1	
+один человек <догнать>ls-m≡гнать:pf-pret-adv m≡становиться:ipf=like	 	 	 				n2	
+ q˳aˁntʼaˁ b≡aˁq-ib-le]=sa≡j malla nasratːin-li-ž]	 	 	 					
+затылок:loc(lat) n≡ударять:pf-pret-adv=cop≡m Мулла Насреддин-obl-dat	 	 	 					
+Однажды Мулла Насреддин шел по улице, и тут его догнал какой-то человек и изо всех сил ударил по затылку.	 	 	 					
+(2) malla nasratːin simi-w≡ač’-ib-le], [ʕaˁsi-w≡iχ-ub-le]	 	 	 				n/0	
+Мулла Насреддин <сердиться>ls-m≡lv:pf-pret-adv <гневаться>ls-m≡lv:pf-pret-adv	 	 	 				n/0	
+[ča-r-ħela-w≡iž-ib-le]=sa≡j:	 	 	 				n/0	
+<обернуться>on+up-el-behind-m≡lv-pret-adv=cop≡m	 	 	 					
+ sun-ni=ra b≡irq-i-d ible	 	 	 					
+сам-erg=add n≡ударять:ipf-th-1 cit	 	 	 					
+Мулла Насреддин рассердился, разгневался, обернулся и подумал: «Я и сам (его) ударю!» 	 	 	 					
+")
+
+(def bug-text-2 "(2) malla nasratːin simi-w≡ač’-ib-le], [ʕaˁsi-w≡iχ-ub-le]	 	 	 				n/0	
+  Мулла Насреддин <сердиться>ls-m≡lv:pf-pret-adv <гневаться>ls-m≡lv:pf-pret-adv	 	 	 				n/0	
+  Мулла Насреддин рассердился, разгневался, обернулся и подумал: «Я и сам (его) ударю!» 	 	 	 					
+")
 
 (log (p/parse-text (s/split-lines bug-text)))
 

@@ -18,10 +18,12 @@
 
 (defn extract-pronoun
   [line]
-  (let [cols (s/split line #"\t")]
+  (let [cols (s/split line #"\t")
+        pronoun (nth cols 2 :error)
+        referent (nth cols 3 (seq line))
+        is-not-full? (or (s/blank? pronoun) (s/blank? referent))]
     {:sentence (nth cols 0)
-     :mark {:pronoun (nth cols 2 :error)
-            :referent (nth cols 3 (seq line))}
+     :mark (when-not is-not-full? {:pronoun pronoun :referent :referent})
      }))
 
 (defn only-not-blank
@@ -91,7 +93,7 @@
 
 (defn fix-translation
   [r-words]
-  (reverse (reduce fix-translation-reducer [] r-words)))
+  (reduce fix-translation-reducer [] r-words))
 
 (defn split-sentence-to-words
   [dargwa russian]
@@ -165,11 +167,12 @@
   [text]
   (->> text
        s/split-lines
-       (remove #(s/starts-with? % "["))
+       ;;(remove #(s/starts-with? % "["))
        (partition-by s/blank?)
        (remove #(every? s/blank? %))
        (map ->to-tale)
-       (take 1)
+       (drop 0)
+       (take 2)
        (db/->ids-hash-map)))
 
 

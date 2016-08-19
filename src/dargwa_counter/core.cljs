@@ -70,22 +70,26 @@
 
 (defn tales-menu
   [tales current-tale-index]
-  [:div.list-group
-   (for [{:keys [id name]} tales
-         :let [is-active? (= id current-tale-index)]]
+  [:select.form-control
+   {:on-change #(set-current-tale-index (-> % .-target .-value js/parseInt))
+    :value current-tale-index}
+   (for [{:keys [id name]} tales]
      ^{:key id}
-     [:a.list-group-item
-      {:class (when is-active? "active")
-       :on-click #(set-current-tale-index id)}
-      name])])
+     [:option {:value id} name])])
 
 (defn tale-header-component
   [{:keys [name author text-lines]}]
   [:div
-   [:h3 name]
-   [:h5 author]
-   [:ul
-    [:li "Lines: " (count text-lines)]]])
+   [:h3 {:style {:margin-top 0}} (str name " (" (count text-lines) " предложений)")]
+   [:h5 author]])
+
+(defn tale-editor
+  [{:keys [name author text-lines]}]
+  [:table.table.table-bordered>tbody
+   (for [{:keys [id words marks translation]} text-lines]
+     ^{:key id}
+     [:tr
+      [:td translation]])])
 
 (defn tales-component
   [app]
@@ -96,7 +100,8 @@
        [:div.row
         [:div.col-md-4 [tales-menu tales (:current-tale-index app)]]
         [:div.col-md-8 [tale-header-component current-tale]]]
-       ])))
+       [:hr]
+       [tale-editor current-tale]])))
 
 (defn home-page []
   [:div.container
