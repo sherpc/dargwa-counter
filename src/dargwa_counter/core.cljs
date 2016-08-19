@@ -57,14 +57,16 @@
 
 (defn debug-state
   []
-  [:div
-   #_[:pre
-    {:style {:white-space "pre-wrap"}}
-    (with-out-str (cljs.pprint/pprint (get (:tales @app) (:current-tale-index @app))))
-    ]
-   [:pre
-    {:style {:white-space "pre-wrap"}}
-    (with-out-str (cljs.pprint/pprint (dissoc @app :tales)))]])
+  (let [dapp @app
+        dbg (dissoc dapp :tales)]
+    [:div
+    #_[:pre
+       {:style {:white-space "pre-wrap"}}
+       (with-out-str (cljs.pprint/pprint (get (:tales @app) (:current-tale-index @app))))
+       ]
+    [:pre
+     {:style {:white-space "pre-wrap"}}
+     (with-out-str (cljs.pprint/pprint dbg))]]))
 
 (defn tales-menu
   [tales current-tale-index]

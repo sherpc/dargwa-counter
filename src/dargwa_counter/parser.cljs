@@ -20,8 +20,8 @@
   [line]
   (let [cols (s/split line #"\t")]
     {:sentence (nth cols 0)
-     :pronoun (nth cols 2 :error)
-     :referent (nth cols 3 (seq line))
+     :mark {:pronoun (nth cols 2 :error)
+            :referent (nth cols 3 (seq line))}
      }))
 
 (defn only-not-blank
@@ -43,32 +43,6 @@
       (extract-pronoun line)
       {:sentence (-> line (s/split #"\t") first s/trim)})))
 
-(defn parse-text
-  [text]
-  (->> text
-       s/split-lines
-       (map parse-line)))
-
-;; Tales
-
-(defn ->to-tale
-  [[name raw-author & lines]]
-  {:name (s/trim name)
-   :author (s/trim raw-author)
-   :text-lines lines})
-
-(defn extract-tales
-  [text]
-  (->> text
-       s/split-lines
-       (remove #(s/starts-with? % "["))
-       (partition-by s/blank?)
-       (remove #(every? s/blank? %))
-       (map ->to-tale)
-       ;;(take 3)
-       (db/->ids-hash-map)))
-
-
 ;; Words
 
 (def predicate-marks #{":pf" ":ipf"})
@@ -86,6 +60,8 @@
    :position pos
    :part-of-speech (part-of-speech translation)})
 
+;; Sentences
+
 (defn char->int
   [c]
   (.charCodeAt c 0))
@@ -102,18 +78,38 @@
   [s]
   (not (some russian-letters s)))
 
+(defn split-to-words
+  [st]
+  (s/split st #" "))
+
+(defn fix-translation-reducer
+  [result w]
+  (let [last-w (peek result)]
+    (if (and last-w (s/ends-with? last-w ":"))
+      (-> result pop (conj (str last-w w)))
+      (conj result w))))
+
+(defn fix-translation
+  [r-words]
+  (reverse (reduce fix-translation-reducer [] r-words)))
+
 (defn split-sentence-to-words
   [dargwa russian]
   (let [d-words (->>
-                 (s/split dargwa #" ")
+                 dargwa
+                 split-to-words
                  (map s/trim)
                  (remove punctuation-marks))
-        r-words (s/split russian #" ")
+        r-words (->>
+                 russian
+                 split-to-words
+                 fix-translation)
         d-c (count d-words)
         r-c (count r-words)
         ids (range d-c)]
     (if (not= d-c r-c)
-      (throw (str "In sentence '" (s/join "||||" d-words) "' and translation '" russian "' different words count." ))
+      []
+      ;;(throw (str "In sentence '" (s/join "||||" d-words) "' and translation '" (s/join "||||" r-words) "' different words count." ))
       (map word d-words r-words ids))))
 
 (defn concat-words
@@ -122,9 +118,10 @@
        (map-indexed (fn [id w] (assoc w :position id)))))
 
 (defn make-sentence
-  [ln {:keys [words]} translation]
+  [ln {:keys [words marks]} translation]
   {:id ln
    :words (concat-words words)
+   :marks (remove nil? marks)
    :translation translation})
 
 
@@ -136,7 +133,9 @@
         dargwa? (is-dargwa? sentence)]
     ;; Если даргинский, просто добавим предложение в текущее состояние
     (if dargwa?
-      (assoc-in state [:current :dargwa] sentence)
+      (-> state
+          (assoc-in [:current :dargwa] sentence)
+          (update-in [:current :marks] conj (:mark pl)))
       ;; Иначе нам надо посмотреть, заполнена даргинская часть, или нет
       ;; Если да -- делаем из неё и текущей русской слова
       ;; Если нет -- значит записываем литературный перевод и отправляем предложение в result
@@ -145,6 +144,32 @@
             (assoc-in [:current :dargwa] nil)
             (update-in [:current :words] conj (split-sentence-to-words (:dargwa current) sentence)))
         (-> state
-            (assoc :current {:ln (inc ln) :words []})
+            (assoc :current {:ln (inc ln) :words [] :marks []})
             (update-in [:result] conj (make-sentence ln current sentence)))))))
+
+(def initial-state {:current {:ln 0 :words [] :marks []} :result []})
+
+(defn parse-text
+  [text-lines]
+  (:result (reduce add-line initial-state text-lines)))
+
+;; Tales
+
+(defn ->to-tale
+  [[name raw-author & lines]]
+  {:name (s/trim name)
+   :author (s/trim raw-author)
+   :text-lines (parse-text lines)})
+
+(defn extract-tales
+  [text]
+  (->> text
+       s/split-lines
+       (remove #(s/starts-with? % "["))
+       (partition-by s/blank?)
+       (remove #(every? s/blank? %))
+       (map ->to-tale)
+       (take 1)
+       (db/->ids-hash-map)))
+
 

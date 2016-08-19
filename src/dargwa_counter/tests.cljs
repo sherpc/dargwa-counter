@@ -29,12 +29,17 @@
 (assert (p/is-dargwa? (first input-lines)))
 (assert (not (p/is-dargwa? (second input-lines))))
 
-(def initial {:current {:ln 0 :words []} :result []})
-(def parsed (p/add-line initial (first input-lines)))
+(def parsed (p/add-line p/initial-state (first input-lines)))
 
-(log parsed)
-(log (p/add-line parsed (nth input-lines 1)))
-(log (reduce p/add-line initial input-lines))
+;;(log parsed)
+;;(log (p/add-line parsed (nth input-lines 1)))
+;;(log (p/parse-text input-lines))
+
+(def bug-text "(8) b≡uc-a, – r≡ikʼ-u-le=sa≡r, – ʕaˁcːe hi.ž	этот	хиз	абаз	иг	эмф	отдать		
+n=хватать:pf-imp f≡говорить:ipf-prs-conv=cop≡f ты: inter(lat) этот	 	 	 					
+«Возьми, — говорит, — его себе».	 	")
+
+(log (p/parse-text (s/split-lines bug-text)))
 
 (.info js/console "All tests passed.")
 
