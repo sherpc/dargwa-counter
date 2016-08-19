@@ -129,8 +129,8 @@
 (defn marks-component
   [marks]
   [:ul.b-marks
-   (for [{:keys [pronoun referent]} marks]
-     ^{:key (str pronoun referent)}
+   (for [{:keys [id pronoun referent]} marks]
+     ^{:key id}
      [:li (str "(" pronoun ", " referent ")")])])
 
 (defn tale-editor

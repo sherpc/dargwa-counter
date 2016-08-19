@@ -56,7 +56,14 @@
   Мулла Насреддин рассердился, разгневался, обернулся и подумал: «Я и сам (его) ударю!» 	 	 	 					
 ")
 
-;;(log (p/parse-text (s/split-lines bug-text)))
+(def bug-text-3 "(9) [[nasratːin-ni [(0m-abs) haj-w≡arqʼ-ib-le], 0m-abs uč-ib-le]=sa≡j] qʼadi-šːu	 		 				0.1	
+Насреддин-erg <идти.вместе>ls-m≡lv:pf-pret-conv (m)вести:pf-pret-conv=cop≡m кади-ad(lat)	 		 				0.2	
+Насреддин пошел (с ним), повел (его) к кади.	 	 	 					
+")
+
+;; 0{1:3}-[abs|erg|dat]
+
+;;(log (p/parse-text (s/split-lines bug-text-3)))
 
 (.info js/console "All tests passed.")
 

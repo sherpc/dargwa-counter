@@ -4,7 +4,7 @@
              :include-macros true]
             [dargwa-counter.db :as db]))
 
-(def punctuation-marks #{"," "–" "-" "."})
+(def punctuation-marks #{"," "–" "-" "." ":" "…"})
 
 (comment (sc/set-fn-validation! true))
 
@@ -14,13 +14,14 @@
   [l]
   (-> l
       (s/replace #"\(\d+\)" "")
+      (s/replace #"^\d+?\." "")
       s/trim))
 
 (defn extract-pronoun
   [line]
   (let [cols (s/split line #"\t")
         pronoun (nth cols 2 :error)
-        referent (nth cols 3 (seq line))
+        referent (nth cols 3 nil)
         is-not-full? (or (s/blank? pronoun) (s/blank? referent))]
     {:sentence (nth cols 0)
      :mark (when-not is-not-full? {:pronoun pronoun :referent referent})
@@ -95,23 +96,47 @@
   [r-words]
   (reduce fix-translation-reducer [] r-words))
 
+
+(defn clean-dargwa-special-symbols
+  [dargwa]
+  (-> dargwa
+      (s/replace #"\(?0[\w+]{0,3}-[erg|abs|dat]{3}\)?" "")
+      (s/replace #"subj\(\w{0,2}\)" "")
+      (s/replace #"\(\.{3}\)" "")
+      (s/replace #"\[*" "")
+      (s/replace #"\]*" "")))
+
+(defn clean-russian-special-symbols
+  [russian]
+  (-> russian
+      (s/replace #"\(рус\.\)" "")))
+
 (defn split-sentence-to-words
   [dargwa russian]
   (let [d-words (->>
                  dargwa
+                 clean-dargwa-special-symbols
                  split-to-words
                  (map s/trim)
+                 (remove s/blank?)
                  (remove punctuation-marks))
         r-words (->>
                  russian
+                 clean-russian-special-symbols
                  split-to-words
+                 (remove s/blank?)
                  fix-translation)
         d-c (count d-words)
         r-c (count r-words)
         ids (range d-c)]
     (if (not= d-c r-c)
-      []
-      ;;(throw (str "In sentence '" (s/join "||||" d-words) "' and translation '" (s/join "||||" r-words) "' different words count." ))
+      ;;[]
+      (do
+        (.log js/console dargwa)
+        (.log js/console russian)
+        (.log js/console (clj->js d-words))
+        (.log js/console (clj->js r-words))
+        (throw (str "In sentence and translation different words count." )))
       (map word d-words r-words ids))))
 
 (defn concat-words
@@ -119,11 +144,17 @@
   (->> (apply concat words)
        (map-indexed (fn [id w] (assoc w :position id)))))
 
+(defn index-marks
+  [marks]
+  (->> marks
+       (remove nil?)
+       (map-indexed (fn [id m] (assoc m :id id)))))
+
 (defn make-sentence
   [ln {:keys [words marks]} translation]
   {:id ln
    :words (concat-words words)
-   :marks (remove nil? marks)
+   :marks (index-marks marks)
    :translation translation})
 
 
@@ -159,6 +190,7 @@
 
 (defn ->to-tale
   [[name raw-author & lines]]
+  (.info js/console (str "Parsing tale '" (s/trim name) "'..."))
   {:name (s/trim name)
    :author (s/trim raw-author)
    :text-lines (parse-text lines)})
@@ -172,7 +204,7 @@
        (remove #(every? s/blank? %))
        (map ->to-tale)
        (drop 0)
-       (take 2)
+       (take 20)
        (db/->ids-hash-map)))
 
 

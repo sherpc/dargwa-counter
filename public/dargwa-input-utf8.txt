@@ -323,7 +323,7 @@ m≡говорить:ipf-prs-conv=cop≡m
 хороший-atr+cop<n> intrj на этот-pl одежда=add	 	 	 					
  hi.l=ʁuna dawla.če≡w-se... hi.l=ʁuna durħaˁ te≡w w≡iχ˳-an-ne,	этот	ne	 					
 этот=like богатый≡m-atr этот-like парень exst≡m m≡становиться:pf-th-cond	 	 	 					
- ma hi.š-tːi paˁrtaˁl=ra, ma hi.ž urči=ra=nu, w≡aˁqʼ˳-en-nu du…[7]	этот	 	 					
+ ma hi.š-tːi paˁrtaˁl=ra, ma hi.ž urči=ra=nu, w≡aˁqʼ˳-en-nu 	этот	 	 					
 на этот-pl одежда=add на этот лошадь=add=contr m≡идти:ipf-imp=contr 	 	 	 					
  b≡aˁqʼ˳-en=nu d≡uqː-a» ible, d≡ičː-ib-le=sa≡d	 	 	 					
 n≡идти:ipf-imp=contr npl≡нести:pf-imp cit npl≡дать:pf-pret-conv=cop≡npl	 	 	 					
@@ -595,7 +595,7 @@ down+оставаться:pf-pret-conv=cop≡m
 бабушка <вздрогнуть>ls-f≡lv:pf-pret-conv	 	 	 	0.1			n2	
  sun-ni-la naˁq-cːe≡b-se 0f-erg buškala[10]=ra lar-b≡ačʼ-ib-le,	 	le	 				n/01	
 сам-obl-gen рука-inter≡n(ess)-atr веник=add <бросить>ls-n≡lv:pf-pret-conv	 	 	 					
- (of-abs) r≡ibšː-ib-le=sa≡r tːura-da.le	 	 	 					
+ (0f-abs) r≡ibšː-ib-le=sa≡r tːura-da.le	 	 	 					
 f≡убегать:pf-pret-conv=cop≡f снаружи(lat)-thither	 	 	 					
 Бабушка вздрогнула, бросила веник, который был у нее в руках и выбежала наружу.	 	 	 					
 (9) χː˳alaba r≡ibšː-ib=qːalle,	 	 	 					
@@ -746,12 +746,12 @@ neg-hpl≡знать:ipf-prs-conv этот-pl-obl.pl-dat
 два-card=add мулла <отделиться>ls-hpl≡lv:pf-pret-conv сам.pl-dat	 	 	 				n/01	
  b≡alχ-un-se dawla.če≡b-se adim-t-a-šːu]	 	 	 					
 hpl≡знать:ipf-prs-atr богатый≡hpl-atr человек-pl-obl.pl-ad(lat)	 	 	 					
-(ohpl-abs) ag-ur-le=sa<b>i	 	 	 					
+(0hpl-abs) ag-ur-le=sa<b>i	 	 	 					
 уходить:pf-pret-conv=cop<hpl>	 	 	 					
 Два муллы отделились и пошли к своим знакомым – богатым людям,	 	 	 					
 (6) hi.l-tːi (0hpl-abs) sala-r-ka.le=ra b≡ax-u-le	этот	хил	муллы	иг	эмф		this/01	
 этот-pl впереди-el-down=add hpl≡идти:ipf-prs-conv	 	 	 				this/01	
-(ohpl-abs) kalg-un-ne=sa<b>i ħaˁž-li-ja	 	 	 					
+(0hpl-abs) kalg-un-ne=sa<b>i ħaˁž-li-ja	 	 	 					
 down+оставаться:pf-prs-conv=cop<hpl> хадж-obl-super(lat)	 	 	 					
 Они и раньше ходили в хадж.	 	 	 					
 (7) dawla.če≡b-t-a-li qulki qʼabul-ʕaˁrqʼ-ib-le=sa≡j	 	 	 					
@@ -770,7 +770,7 @@ down+оставаться:pf-prs-conv=cop<hpl> хадж-obl-super(lat)
 (10) hi.l qulki uˁħna-herχː-ur-le=sa≡j	этот	 	 		главная		n1	
   этот вор (m)войти:pf-pret-conv=cop≡m	 	 	 		норм глагол		0.1	
 0m-abs ʕeˁr-urkʼ-ar – hi.l.tːu 0m-abs xːura-ka-jχ-ub-le	 	le	 				0.1	
-<смотреть>ls-(m) lv:ipf-th здесь(lat) <остановиться.на.отдых>ls-down-lv:pf-pret-conv	этот	 	 					
+<смотреть>ls-(m)lv:ipf-th здесь(lat) <остановиться.на.отдых>ls-down-lv:pf-pret-conv	этот	 	 					
 Вор зашел в этот дом, посмотрел и остался там.	 	 	 					
 (11) ca xːunul r≡arčː-ib-le=sa≡j hi.l.tːu≡r	 	 	 					
   один женщина f≡найти:pf-pret-conv=cop≡m здесь≡f(ess)	 	 	 					
@@ -851,7 +851,7 @@ up+бросать:pf-pret-conv хинкал-obl.pl-inter(lat) хинкал-pl=ad
 0m-erg gu-r-haʁ-ib-le gul-e=ra,	 	le	 				n5	
 under-el-up+достигать:pf-pret-conv ребенок-pl=add	 	 	 				0.5	
  sun-ni=ra 0hpl-abs b≡aχː-un-ne=sa≡j χink’-a-li	 	 	 		лишний хинкал			
-сам-erg =add hpl≡кормить:pf-pret-conv=cop≡m хинкал-obl.pl-erg	 	 	 					
+сам-erg=add hpl≡кормить:pf-pret-conv=cop≡m хинкал-obl.pl-erg	 	 	 					
 Зарезал он барана, разделал тушу, закинул мясо, сварил хинкал, разбудил детей, накормил их хинкалом.	 	 	 					
 (27) (0hpl-abs) b≡elqː-aq-un-ne gule, (0hpl-abs) ħaˁ≡b-aˁħ hatʼi=ra	 	ne	 				n/01	
   hpl≡насытиться:pf-caus-pret-conv ребенок:pl сзади≡hpl-adv.loc потом=add	 	 	 				n/01	
@@ -1090,10 +1090,8 @@ nig tːura qː-iž ħaˁdur-r≡iχ-ub-le i.χ=ra χe≡r	этот
 (34) qːuz-r-a-ja ʕeˁr-urkʼ-u-le durħaˁ=ra χe≡w	 	le	 					
 гусь-pl-obl.pl-super(lat) <смотреть>ls-lv:ipf-prs-conv мальчик=add exst≡m	 	 	 					
 На гусей смотрит мальчик.	 	 	 					
-(35) qal-la ħela≡d dikʼ-le kaʁ-ib-le nig-la qʼ˳aˁl-e	 	le	 					
-дом-gen сзади≡npl(ess) отдельный-adv down+достичь:pf-pret-conv молоко-gen корова-pl	 	 	 					
-te≡d	 	 	 					
-exst≡npl	 	 	 					
+(35) qal-la ħela≡d dikʼ-le kaʁ-ib-le nig-la qʼ˳aˁl-e te≡d	 	le	 					
+дом-gen сзади≡npl(ess) отдельный-adv down+достичь:pf-pret-conv молоко-gen корова-pl exst≡npl	 	 	 					
 За домой отдельно загнанные дойные коровы.	 	 	 					
 (36) hi.tːi q'˳aˁl-e icː-u-le d≡urkː-ar	тот	le	 					
 тот+pl корова-pl доить:ipf-prs-conv npl≡быть.возможным:ipf-th	 	 	 					
@@ -1151,7 +1149,7 @@ n≡идти(дождь):ipf-prs-atr+cop≡n n≡холодный-atr ночь=a
  laˁbqu-la awlaq-li-ja≡b	 	 	 					
 Лабко-gen поле-obl-super≡n(ess)	 	 	 					
 Дошли до какого-то места – выпал снег, я (даже) выспаться не мог (от холода), замерзали ноги, замерзало тело, сверху идет дождь со снегом, холодная ночь была – на полях Лабко.	 	 	 					
-0	 	 	 				n1	
+šːala d≡ič-ib, bara-ħilħi šːala=ra d≡ič-ib-le
 свет npl≡падать:pf-pret чуть-еле свет=add npl≡падать:pf-pret	 	 	 				n1	
  0hpl-abs d≡aš-ib-da ka.t’	 	 	 				0.2	
 1/2pl≡идти:ipf-pret-1 вниз	 	 	 					
@@ -1338,7 +1336,7 @@ n≡исчезнуть:pf-pret-conv=cop≡n этот-pl-obl.pl-gen собака-
 весь<hpl> чабан-pl hpl≡драться:ipf-pret-conv hpl≡найти:pf-pret=1 здесь≡hpl(ess)	 	 	 					
 Всех пастухов я там нашел переругавшимися.	 	 	 					
 (40) (реплика одного из слушателей:)	 	 	 					
- bukʼun se ʡaˁjib-la w≡e ʡ=sa≡j=a?	 	 	 					
+ bukʼun se ʡaˁjib-la w≡eʡ=sa≡j=a?	 	 	 					
 чабан что вина-gen m≡хозяин=cop≡m=cq	 	 	 					
 В чем тут вина чабана?	 	 	 					
 (41) (рассказчик продолжает:)	 	 	 					
@@ -1708,7 +1706,7 @@ exst≡n=iq  m≡говорить:ipf-th там(lat) <смотреть>ls-under-
 (5) i.š.til-t-a-li=q’ar i.š.til-t-a-li se-ir-u,	 	 	 					
 другой-pl-obl.pl-erg=top.contr другой-pl-obl.pl-erg=то что-lv:ipf-th	 	 	 					
  maˁmmuli=q’ar waˁ-le iž ʕeˁrχ˳-ar	этот	хиз	все	иг	смена			
-Mямму= top.contr плохой-adv этот neg+мочь:ipf-th	 	 	 					
+Mямму=top.contr плохой-adv этот neg+мочь:ipf-th	 	 	 					
 Другие-то могут кое-что натворить (букв. что сделают), а Мямму ничего плохого сделать не может.	 	 	 					
 (6) hi.l-tːi (0npl-abs) arc ka-d≡irxː-u-le=da dali]	этот	 	 				n/01	
   этот-pl деньги down-npl≡класть:ipf-prs-conv=1 я:erg	 	 	 				n/01	
