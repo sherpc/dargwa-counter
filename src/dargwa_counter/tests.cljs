@@ -56,7 +56,7 @@
   Мулла Насреддин рассердился, разгневался, обернулся и подумал: «Я и сам (его) ударю!» 	 	 	 					
 ")
 
-(log (p/parse-text (s/split-lines bug-text)))
+;;(log (p/parse-text (s/split-lines bug-text)))
 
 (.info js/console "All tests passed.")
 

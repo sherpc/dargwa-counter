@@ -3,11 +3,24 @@
             [ajax.core :refer [GET]]
             [dargwa-counter.parser :as p]
             [dargwa-counter.tests :as dc-tests]
+            [dargwa-counter.localstorage :as ls]
             [dargwa-counter.db :as db]))
 ;; -------------------------
 ;; Db
 (def default-state {})
 (defonce app (atom default-state))
+(def app-key "app")
+
+(defn save-app!
+  []
+  (ls/set-item! app-key @app)
+  (js/alert "Saved!"))
+
+(defn load-app!
+  []
+  ;;(.log js/console (clj->js (ls/get-item app-key)))
+  (reset! app (ls/get-item app-key))
+  (js/alert "Loaded!"))
 
 (defn on-readed
   [e]
@@ -53,7 +66,16 @@
   [file-name]
   [:div.page-header
    [:h1 "Dargwa language counter app"]
-   [:p [upload-btn file-name]]])
+   [:p.pull-left [upload-btn file-name]]
+   [:div.pull-right
+    [:a.btn.btn-xs.btn-success
+     {:on-click save-app!}
+     "Save"]
+    [:a.btn.btn-xs.btn-danger
+     {:on-click load-app!
+      :style {:margin-left "10px"}}
+     "Load"]]
+   [:div.clearfix]])
 
 (defn debug-state
   []
