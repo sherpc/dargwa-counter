@@ -67,7 +67,7 @@
 (defn debug-state
   []
   (let [dapp @app
-        dbg (dissoc dapp :data)]
+        dbg (assoc-in dapp [:data :tales] "truncated")]
     [:div
     #_[:pre
        {:style {:white-space "pre-wrap"}}
@@ -83,9 +83,10 @@
    {:style {:width "auto" :height "30px"}
     :on-change #(set-current-tale-index (-> % .-target .-value js/parseInt))
     :value current-tale-index}
-   (for [{:keys [id name]} tales]
+   (for [{:keys [id name problems]} tales
+         :let [has-problems? (pos? problems)]]
      ^{:key id}
-     [:option {:value id} name])])
+     [:option {:value id} (str name (when has-problems? " (!)"))])])
 
 (defn tale-header-component
   [{:keys [name author problems]}]
@@ -123,6 +124,15 @@
      ^{:key id}
      [:li (str "(" pronoun ", " referent ")")])])
 
+(defn sentence-without-words
+  [translation]
+  [:div
+   [:div.alert.alert-warning.m-alert-without-bottom-margin
+    [:h6 "Почему-то нет слов в предложении! Проверьте текст. Перевод:"]
+    [:p translation]
+    [:h6 "Русские символы в переводе:"]
+    [:p (clojure.string/join ", " (filter p/russian-letters translation))]]])
+
 (defn sentence-component
   [words translation]
   (if (seq words)
@@ -130,10 +140,7 @@
      {:style {:overflow-x "scroll"}}
      [words-component words]
      translation]
-    [:div
-     [:div.alert.alert-warning.m-alert-without-bottom-margin
-      [:h6 "Почему-то нет слов в предложении! Проверьте текст. Перевод:"]
-      [:p translation]]]))
+    [sentence-without-words translation]))
 
 (defn tale-editor
   [{:keys [name author text-lines]}]
@@ -159,7 +166,7 @@
      [tale-editor current-tale]]))
 
 (defn header
-  [{:keys [file-name current-tale-index]} tales]
+  [{:keys [file-name current-tale-index]} {:keys [total-problems]} tales]
   [:div.page-header
    {:style {:margin-top default-margin}}
    (if file-name
@@ -168,8 +175,10 @@
      [:div.pull-left
       {:style {:padding-top "5px"}}
       [upload-btn file-name]])
-   [:div.pull-left
-    [:div.alert.alert-warning.m-alert-left-navbar "3 истории с ошибками."]]
+   (when total-problems
+     [:div.pull-left
+      [:div.alert.alert-warning.m-alert-left-navbar
+       (str total-problems " истории с ошибками!")]])
    [:div.pull-right
     [:a.btn.btn-sm.btn-success
      {:on-click save-app!}
@@ -185,9 +194,9 @@
         tales (-> data :tales db/select)
         current-tale (db/get-current-tale ui data)]
     [:div.container.m-card
-     [header ui tales]
-     [tales-component tales current-tale]
-     [debug-state]]))
+     [header ui data tales]
+     [debug-state]
+     [tales-component tales current-tale]]))
 
 ;; -------------------------
 ;; Initialize app

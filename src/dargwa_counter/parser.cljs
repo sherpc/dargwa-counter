@@ -213,10 +213,15 @@
        (remove #(every? s/blank? %))
        (map ->to-tale)
        (drop 0)
-       (take 20)
-       (db/->ids-hash-map)))
+       (take 20)))
 
 (defn parse-file
   [text]
-  {:tales (extract-tales text)})
+  (let [tales (extract-tales text)
+        tp (->> tales
+                (map :problems)
+                (filter pos?)
+                count)]
+    {:tales (db/->ids-hash-map tales)
+     :total-problems tp}))
 

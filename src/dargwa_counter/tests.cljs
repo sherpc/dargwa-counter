@@ -32,6 +32,8 @@
 
 (def parsed (p/add-line p/initial-state (first input-lines)))
 
+;;(log (some p/russian-letters "0npl-abs haj-ka-d≡arqʼ-ib-le sergоqːala-lla,"))
+
 ;;(log parsed)
 ;;(log (p/add-line parsed (nth input-lines 1)))
 ;;(log (p/parse-text input-lines))

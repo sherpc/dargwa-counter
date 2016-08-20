@@ -1267,7 +1267,7 @@ on+up-el-up-n≡делать:pf-pret-conv здесь-el-up отара вверх
 Как раз когда вышли во второй день, в отаре было две тысячи овец (букв. ‘была двухтысячная отара’).	 	 	 					
 (28) 0npl-abs dikʼ-d≡arqʼ-isːe musːa b≡aˁku wabšːe	 	 	 					
 <разделить>ls-npl≡lv:pf-inf+atr место n≡neg.exst вообще(рус.)	 	 	 					
- 0npl-abs haj-ka-d≡arqʼ-ib-le sergоqːala-lla,	 	le	 				0.1	
+ 0npl-abs haj-ka-d≡arqʼ-ib-le sergoqːala-lla,	 	le	 				0.1	
 <идти.вместе>ls-down-npl≡lv:pf-pret-conv Сергокала-gen	 	 	 				n2	
  hi.χ.tːu≡b 0hpl-erg ca χː˳ala-se baza b≡arčː-ib-da	 	 	 					
 там≡n(ess) один большой-atr загон n≡найти:pf-pret=1	 	 	 					
@@ -1283,7 +1283,7 @@ n≡пить=add n≡пить:pf-pret-conv ночь-adv голова-pl боле
  čʼu-ž-il-la beri waˁ-le ha-t’=ra-ha-d≡icː-ur=da=qʼale	 	le	 					
 два-ord-atr.contr-gen день плохой-adv up-if=add-up-1/2pl≡стать:pf-pret=1=actl	 	 	 					
 Еле-еле загнали туда (овец) – люди устали, ночью не выспались, устали, прошлой ночью подвыпили, и головы болели, и на второй день с трудом (‘плохо') встали.	 	 	 					
-(30) 0-abs 0hpl-erg d≡uħna-aʁ-ib-le sergоqːala-lla baza-le-ħe≡d,	 	le	 				0.2	
+(30) 0-abs 0hpl-erg d≡uħna-aʁ-ib-le sergoqːala-lla baza-le-ħe≡d,	 	le	 				0.2	
 <загнать>1/2pl≡ls-lv:pf-pret-conv Сергокала-gen загон-obl-in≡1/2pl(ess)	 	 	 				0.2	
 0-abs 0hpl-erg dik’=ra-d≡arqʼ-ib-le, 0hpl-abs d≡at-ka-d≡išː-ib-le,	 	le	 				0.1	
 <разделить>ls=add-1/2pl≡lv:pf-pret-conv   <выйти>1/2pl≡ls-down-1/2pl≡lv:pf-pret-conv	 	 	 				0.1	
@@ -1524,7 +1524,7 @@ m≡говорить:ipf-th этот овца-dat	этот
 (0hpl-erg) b≡ebčʼ-aq-ib b≡ikʼ˳-ar macːa	 	 	 					
 n≡умереть:ipf-caus-pret hpl≡говорить:ipf-th овца	 	 	 					
 «Эти идиоты, они эту овцу бросили в воздух, подставили вилы, (овца) упала на вилы, (так они) убили эту овцу», – говорят (ему).	 	 	 					
-(75) ej slušaj adim-te=sa<b>i=j, žiwоtnij-te=sa<b>i=j –	 	 	 					
+(75) ej slušaj adim-te=sa<b>i=j, žiwotnij-te=sa<b>i=j –	 	 	 					
 эй слушай(рус.) человек-pl=cop<hpl>=pq животное(рус.)-pl=cop<hpl>=pq	 	 	 					
  w≡ikʼ˳-ar – hi.l-tːi?	этот	хил	люди	иг	эмф			
 m≡говорить:ipf-th этот-pl	 	 	 					
@@ -1646,7 +1646,10 @@ m≡идти:ipf-imp один я:gen машина <чинить>n≡ls-n≡lv:pf
  nig sa-d≡itʼ-aq-iž mašina b≡al-b≡arqʼ-aq-iž]	 	 	 					
 молоко hither-npl≡отбирать:ipf-caus-inf машина <чинить>n≡ls-n≡lv:pf-inf	 	 	 					
 Насилу повела в двенадцать часов его я сепарировать молоко… ремонтировать машину для сепарирования молока. 	 	 	 					
+
+
 Лампочка	 	 	 					
+Рассказчица – Патимат Магомедова
 (1) ca dučːa lampučk'a b≡ilq'-ʕaˁ-b≡ilq'-un-ne	 	ne	 					
 один ночь лампочка n≡гореть-neg-n≡гореть:ipf-pret-conv	 	 	 					
 Однажды ночью лампочка не горела.	 	 	 					
@@ -1687,7 +1690,10 @@ exst≡n=iq  m≡говорить:ipf-th там(lat) <смотреть>ls-under-
 (9) ħaˁna hat’i sun-ni… hat’i d≡aˁkːu dila d≡urs-isːe	 	 	 					
 сейчас потом сам-erg потом npl≡neg.exst я:gen npl≡сказать:pf-inf+atr	 	 	 					
 Тогда мне… на это мне нечего было сказать.	 	 	 					
+
+
 Деньги	 	 	 					
+Рассказчица – Патимат Магомедова
 (1) (слушательница:)	 	 	 					
  se-k'al gu≡d-ʕaˁ-d≡alt-un-ne qːuʁa-le b≡urs-a	 	le	 					
 что-indef under≡npl-neg-npl≡оставить:ipf-prs-conv красивый-adv n≡сказать:pf-imp	 	 	 					
