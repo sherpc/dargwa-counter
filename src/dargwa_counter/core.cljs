@@ -180,13 +180,15 @@
       [:div.alert.alert-warning.m-alert-left-navbar
        (str total-problems " истории с ошибками!")]])
    [:div.pull-right
-    [:a.btn.btn-sm.btn-success
+    [:a.btn.btn-sm.btn-default
      {:on-click save-app!}
-     "Save"]
-    [:a.btn.btn-sm.btn-danger
+     [:span.fa.fa-save]
+     " Сохранить"]
+    [:a.btn.btn-sm.btn-warning
      {:on-click load-app!
       :style {:margin-left default-margin}}
-     "Load"]]
+     [:span.fa.fa-download]
+     " Загрузить"]]
    [:div.clearfix]])
 
 (defn home-page []
