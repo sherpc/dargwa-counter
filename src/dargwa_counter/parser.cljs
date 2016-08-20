@@ -187,12 +187,22 @@
 
 ;; Tales
 
+(defn count-without-words
+  [sentences]
+  (->> sentences
+       (map :words)
+       (remove seq)
+       count))
+
 (defn ->to-tale
   [[name raw-author & lines]]
   (.info js/console (str "Parsing tale '" (s/trim name) "'..."))
-  {:name (s/trim name)
-   :author (s/trim raw-author)
-   :text-lines (-> lines parse-text db/->ids-hash-map)})
+  (let [sentences (parse-text lines)
+        problems (count-without-words sentences)]
+    {:name (s/trim name)
+     :author (s/trim raw-author)
+     :text-lines (db/->ids-hash-map sentences)
+     :problems problems}))
 
 (defn extract-tales
   [text]
@@ -206,4 +216,7 @@
        (take 20)
        (db/->ids-hash-map)))
 
+(defn parse-file
+  [text]
+  {:tales (extract-tales text)})
 

@@ -2,6 +2,9 @@
   (:require [schema.core :as sc
              :include-macros true]))
 
+(def default-ui {:file-name nil :current-tale-index 0})
+(def default-app {:ui default-ui :data {}})
+
 (defn ->ids-hash-map
   [xs]
   (->> xs
@@ -15,8 +18,10 @@
        (sort-by :id)))
 
 (defn get-current-tale
-  [{:keys [tales current-tale-index]}]
-  (get tales current-tale-index))
+  [{:keys [current-tale-index]} {:keys [tales]}]
+  (-> tales
+      (get current-tale-index)
+      (update :text-lines select)))
 
 (defn update-in-tale
   [{:keys [current-tale-index] :as db} path f arg1]

@@ -5,10 +5,14 @@
             [dargwa-counter.tests :as dc-tests]
             [dargwa-counter.localstorage :as ls]
             [dargwa-counter.db :as db]))
+
+;; css (hell :( never do it like this! )
+
+(def default-margin "15px")
+
 ;; -------------------------
 ;; Db
-(def default-state {})
-(defonce app (atom default-state))
+(defonce app (atom db/default-app))
 (def app-key "app")
 
 (defn save-app!
@@ -25,9 +29,7 @@
 (defn on-readed
   [e]
   (let [text (-> e .-target .-result)]
-    (swap! app assoc
-           :tales (p/extract-tales text)
-           :current-tale-index 0)))
+    (swap! app assoc :data (p/parse-file text))))
 
 (defn put-upload
   [e]
@@ -37,15 +39,15 @@
         reader (js/FileReader.)]
     (set! (.-onload reader) on-readed)
     (.readAsText reader file)
-    (swap! app assoc :file-name (.-name file))))
+    (swap! app assoc-in [:ui :file-name] (.-name file))))
 
 (defn clean-file
   []
-  (reset! app default-state))
+  (reset! app db/default-app))
 
 (defn set-current-tale-index
   [id]
-  (swap! app assoc :current-tale-index id))
+  (swap! app assoc-in [:ui :current-tale-index] id))
 ;; -------------------------
 ;; Views
 
@@ -62,27 +64,10 @@
       " "
       [:i.fa.fa-times {:on-click clean-file}]])])
 
-(defn header
-  [file-name]
-  [:div.page-header
-   {:style {:margin-top "15px"}}
-   [:div.pull-left
-    {:style {:padding-top "5px"}}
-    [upload-btn file-name]]
-   [:div.pull-right
-    [:a.btn.btn-sm.btn-success
-     {:on-click save-app!}
-     "Save"]
-    [:a.btn.btn-sm.btn-danger
-     {:on-click load-app!
-      :style {:margin-left "10px"}}
-     "Load"]]
-   [:div.clearfix]])
-
 (defn debug-state
   []
   (let [dapp @app
-        dbg (dissoc dapp :tales)]
+        dbg (dissoc dapp :data)]
     [:div
     #_[:pre
        {:style {:white-space "pre-wrap"}}
@@ -95,17 +80,21 @@
 (defn tales-menu
   [tales current-tale-index]
   [:select.form-control
-   {:on-change #(set-current-tale-index (-> % .-target .-value js/parseInt))
+   {:style {:width "auto" :height "30px"}
+    :on-change #(set-current-tale-index (-> % .-target .-value js/parseInt))
     :value current-tale-index}
    (for [{:keys [id name]} tales]
      ^{:key id}
      [:option {:value id} name])])
 
 (defn tale-header-component
-  [{:keys [name author text-lines]}]
+  [{:keys [name author problems]}]
   [:div
-   [:h3 {:style {:margin-top 0}} (str name " (" (count text-lines) " предложений)")]
-   [:h5 author]])
+   [:h3 {:style {:margin-top 0}} name]
+   [:h5 author]
+   (when (> problems 0)
+     [:div.alert.alert-warning.m-alert-without-bottom-margin
+      (str "В тексте есть " problems " предложений без слов.")])])
 
 (defn words-component
   [words]
@@ -134,45 +123,71 @@
      ^{:key id}
      [:li (str "(" pronoun ", " referent ")")])])
 
+(defn sentence-component
+  [words translation]
+  (if (seq words)
+    [:div
+     {:style {:overflow-x "scroll"}}
+     [words-component words]
+     translation]
+    [:div
+     [:div.alert.alert-warning.m-alert-without-bottom-margin
+      [:h6 "Почему-то нет слов в предложении! Проверьте текст. Перевод:"]
+      [:p translation]]]))
+
 (defn tale-editor
   [{:keys [name author text-lines]}]
   [:table.table
    {:style {:table-layout "fixed"}}
    [:thead
     [:tr
-     [:th
-      {:style {:width "200px"}}
-      "Отметки"]
+     [:th {:style {:width "200px"}} "Отметки"]
      [:th "Слова и полный перевод"]]]
    [:tbody
-    (for [{:keys [id words marks translation]} (db/select text-lines)]
+    (for [{:keys [id words marks translation]} text-lines]
       ^{:key id}
       [:tr
-       [:td
-        [marks-component (db/select marks)]]
-       [:td
-        [:div
-         {:style {:overflow-x "scroll"}}
-         [words-component (db/select words)]
-         translation]]])]])
+       [:td [marks-component (db/select marks)]]
+       [:td [sentence-component (db/select words) translation]]])]])
 
 (defn tales-component
-  [app]
-  (let [tales (-> app :tales db/select)
-        current-tale (db/get-current-tale app)]
-    (when (seq tales)
-      [:div
-       [:div.row
-        [:div.col-md-4 [tales-menu tales (:current-tale-index app)]]
-        [:div.col-md-8 [tale-header-component current-tale]]]
-       [:hr]
-       [tale-editor current-tale]])))
+  [tales current-tale]
+  (when (seq tales)
+    [:div
+     [tale-header-component current-tale]
+     [:hr]
+     [tale-editor current-tale]]))
+
+(defn header
+  [{:keys [file-name current-tale-index]} tales]
+  [:div.page-header
+   {:style {:margin-top default-margin}}
+   (if file-name
+     [:div.pull-left
+      [tales-menu tales current-tale-index]]
+     [:div.pull-left
+      {:style {:padding-top "5px"}}
+      [upload-btn file-name]])
+   [:div.pull-left
+    [:div.alert.alert-warning.m-alert-left-navbar "3 истории с ошибками."]]
+   [:div.pull-right
+    [:a.btn.btn-sm.btn-success
+     {:on-click save-app!}
+     "Save"]
+    [:a.btn.btn-sm.btn-danger
+     {:on-click load-app!
+      :style {:margin-left default-margin}}
+     "Load"]]
+   [:div.clearfix]])
 
 (defn home-page []
-  [:div.container.m-card
-   [header (:file-name @app)]
-   [tales-component @app]
-   [debug-state]])
+  (let [{:keys [ui data]} @app
+        tales (-> data :tales db/select)
+        current-tale (db/get-current-tale ui data)]
+    [:div.container.m-card
+     [header ui tales]
+     [tales-component tales current-tale]
+     [debug-state]]))
 
 ;; -------------------------
 ;; Initialize app

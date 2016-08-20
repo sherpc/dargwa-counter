@@ -611,7 +611,7 @@ f≡убегать:pf-pret-conv=cop≡f снаружи(lat)-thither
  hi.t ʕaˁ-r≡ibšː-ini=qʼale ible	тот	хит	бабушка	иг	эмф			
 тот neg-f≡убегать:ipf-hab=actl cit	 	 	 					
 «Если бы ничего не случилось, она не убежала бы.»	 	 	 					
-(12) 0erg-m b≡arх-b≡at-ur-le žuž=ra sa≡j=ra hi.l-i-hi-tːi sa≡j=ra	тот	хил	бабушка	иг	смена вниз		n1	
+(12) 0erg-m b≡arx-b≡at-ur-le žuž=ra sa≡j=ra hi.l-i-hi-tːi sa≡j=ra	тот	хил	бабушка	иг	смена вниз		n1	
   <оставлять >n≡ls-n≡lv:pf-pret-conv книга=add сам≡m=add тот-obl-post-trans сам≡m=add	 	 	 				ref2	
  w≡ibšː-ib-le=sa≡j	 	 	 					
 m≡убегать:pf-pret-conv=cop≡m	 	 	 					
@@ -1565,7 +1565,6 @@ n≡ловить:pf-th-pst.cond-cond m≡говорить:ipf-th этот зло
 	 	 	 					
 Истории бабушки Патимат	 	 	 					
 Рассказчица – Патимат Магомедова	 	 	 					
-Сепаратор	 	 	 					
 (1) ħaˁna d≡aˁqʼ˳-i=da=j nuxːa hatʼi?	 	 	 					
 теперь 1/2pl=идти:ipf-prop=1=pq мы потом	 	 	 					
 Нам уже можно уходить?	 	 	 					
