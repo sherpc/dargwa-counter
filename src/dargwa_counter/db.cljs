@@ -51,8 +51,12 @@
         current-tale-index (:current-tale-index ui)
         marks (get-in data [:tales current-tale-index :text-lines s-id :marks])
         last-id (->> marks (map (fn [[id _]] id)) (apply max))
-        new-id (inc last-id)
+        new-id (inc (or last-id -1))
         new-mark {:pronoun pronoun :referent referent :id new-id}]
     (-> app
         (assoc-in [:data :tales current-tale-index :text-lines s-id :marks new-id] new-mark)
         close-add-mark-popup)))
+
+(defn remove-mark
+  [{:keys [ui] :as app} s-id m-id]
+  (update-in app [:data :tales (:current-tale-index ui) :text-lines s-id :marks] dissoc m-id))

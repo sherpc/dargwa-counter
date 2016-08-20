@@ -73,6 +73,9 @@
   [k v]
   (swap! app db/change-add-mark-text k v))
 
+(defn remove-mark!
+  [s-id m-id]
+  (swap! app db/remove-mark s-id m-id))
 ;; -------------------------
 ;; Views
 
@@ -171,7 +174,11 @@
      [:ul.b-marks
       (for [{:keys [id pronoun referent]} marks]
         ^{:key id}
-        [:li (str "(" pronoun " / " referent ")")])]]))
+        [:li (str "(" pronoun " / " referent ")")
+         [:span
+          [:a.btn.btn-xs.text-danger
+           {:on-click #(remove-mark! s-id id)}
+           [:i.fa.fa-times]]]])]]))
 
 (defn sentence-without-words
   [translation]
