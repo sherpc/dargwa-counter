@@ -112,16 +112,16 @@
   [:table.table.table-bordered.table-words
    [:thead
     [:tr
-     (for [{:keys [dargwa part-of-speech position]} words]
-       ^{:key position}
+     (for [{:keys [dargwa part-of-speech id]} words]
+       ^{:key id}
        [:th
         {:class (when (= part-of-speech :predicate) "m-predicate")}
         dargwa]
        )]]
    [:tbody
     [:tr
-     (for [{:keys [translation part-of-speech position]} words]
-       ^{:key position}
+     (for [{:keys [translation part-of-speech id]} words]
+       ^{:key id}
        [:td
         {:class (when (= part-of-speech :predicate) "m-predicate")}
         translation]
@@ -145,20 +145,20 @@
       "Отметки"]
      [:th "Слова и полный перевод"]]]
    [:tbody
-    (for [{:keys [id words marks translation]} text-lines]
+    (for [{:keys [id words marks translation]} (db/select text-lines)]
       ^{:key id}
       [:tr
        [:td
-        [marks-component marks]]
+        [marks-component (db/select marks)]]
        [:td
         [:div
          {:style {:overflow-x "scroll"}}
-         [words-component words]
+         [words-component (db/select words)]
          translation]]])]])
 
 (defn tales-component
   [app]
-  (let [tales (db/list-tales app)
+  (let [tales (-> app :tales db/select)
         current-tale (db/get-current-tale app)]
     (when (seq tales)
       [:div

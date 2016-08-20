@@ -57,10 +57,9 @@
     :unknown))
 
 (defn word
-  [dargwa translation pos]
+  [dargwa translation]
   {:dargwa dargwa
    :translation translation
-   :position pos
    :part-of-speech (part-of-speech translation)})
 
 ;; Sentences
@@ -137,18 +136,19 @@
         (.log js/console (clj->js d-words))
         (.log js/console (clj->js r-words))
         (throw (str "In sentence and translation different words count." )))
-      (map word d-words r-words ids))))
+      (map word d-words r-words))))
 
 (defn concat-words
   [words]
-  (->> (apply concat words)
-       (map-indexed (fn [id w] (assoc w :position id)))))
+  (->> words
+       (apply concat)
+       db/->ids-hash-map))
 
 (defn index-marks
   [marks]
   (->> marks
        (remove nil?)
-       (map-indexed (fn [id m] (assoc m :id id)))))
+       db/->ids-hash-map))
 
 (defn make-sentence
   [ln {:keys [words marks]} translation]
@@ -156,7 +156,6 @@
    :words (concat-words words)
    :marks (index-marks marks)
    :translation translation})
-
 
 (defn add-line
   [{:keys [current result] :as state} line]
@@ -193,7 +192,7 @@
   (.info js/console (str "Parsing tale '" (s/trim name) "'..."))
   {:name (s/trim name)
    :author (s/trim raw-author)
-   :text-lines (parse-text lines)})
+   :text-lines (-> lines parse-text db/->ids-hash-map)})
 
 (defn extract-tales
   [text]

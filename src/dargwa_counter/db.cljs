@@ -8,27 +8,20 @@
        (map-indexed (fn [i x] [i (assoc x :id i)]))
        (into {})))
 
-(defn list-tales
-  [{:keys [tales]}]
-  (map (fn [[_ v]] v) tales))
+(defn select
+  [indexed-seq]
+  (->> indexed-seq
+       (map (fn [[_ v]] v))
+       (sort-by :id)))
 
 (defn get-current-tale
   [{:keys [tales current-tale-index]}]
   (get tales current-tale-index))
 
-(def Word
-  {:dargwa sc/Str
-   :translation sc/Str
-   :part-of-speech (sc/enum :predicate :unknown)
-   :position sc/Int
-   :sentence-id sc/Int})
+(defn update-in-tale
+  [{:keys [current-tale-index] :as db} path f arg1]
+  (update-in db (concat [:tales current-tale-index] path) f arg1))
 
-(def Sentence
-  {:id sc/Int
-   (sc/optional-key :pronoun) sc/Str
-   (sc/optional-key :referent) sc/Str
-   })
-
-(def Text
-  {:words [Word]
-   :sentences [Sentence]})
+(defn add-mark
+  [{:keys [current-tale-index] :as db} s-id mark]
+  (update-in db [:tales current-tale-index :text-lines s-id :marks] conj mark))

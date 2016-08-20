@@ -9,7 +9,7 @@
 
 (defn make-word
   [dargwa translation]
-  (p/word dargwa translation 0))
+  (p/word dargwa translation))
 
 
 (assert (= :unknown (-> (make-word "he.l-a-la" "этот-obl-gen") :part-of-speech)))
