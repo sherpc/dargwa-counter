@@ -10,9 +10,17 @@
 
 (def default-margin "15px")
 
+;; utils
+
+(defn event-value
+  [e]
+  (-> e .-target .-value))
+
 ;; -------------------------
 ;; Db
+
 (defonce app (atom db/default-app))
+
 (def app-key "app")
 
 (defn save-app!
@@ -28,7 +36,7 @@
 
 (defn on-readed
   [e]
-  (let [text (-> e .-target .-result)]
+  (let [text (event-value e)]
     (swap! app assoc :data (p/parse-file text))))
 
 (defn put-upload
@@ -48,6 +56,23 @@
 (defn set-current-tale-index
   [id]
   (swap! app assoc-in [:ui :current-tale-index] id))
+
+(defn show-add-mark-popup!
+  [s-id]
+  (swap! app db/show-add-mark-popup s-id))
+
+(defn add-mark!
+  []
+  (swap! app db/add-mark))
+
+(defn close-add-mark-popup!
+  []
+  (swap! app db/close-add-mark-popup))
+
+(defn change-add-mark-text!
+  [k v]
+  (swap! app db/change-add-mark-text k v))
+
 ;; -------------------------
 ;; Views
 
@@ -117,12 +142,36 @@
         translation]
        )]]])
 
+(defn add-mark-popup-component
+  [{:keys [s-id pronoun referent]}]
+  [:div
+   [:input.form-control.input-sm.m-mark-input
+    {:placeholder "pronoun"
+     :on-change #(change-add-mark-text! :pronoun (event-value %))}]
+   [:input.form-control.input-sm.m-mark-input
+    {:placeholder "referent"
+     :on-change #(change-add-mark-text! :referent (event-value %))}]
+   [:a.btn.btn-sm.btn-default.pull-left
+    {:on-click close-add-mark-popup!}
+    [:i.fa.fa-arrow-left]
+    " Назад"]
+   [:a.btn.btn-sm.btn-success.pull-right
+    {:on-click add-mark!}
+    "Добавить"]])
+
 (defn marks-component
-  [marks]
-  [:ul.b-marks
-   (for [{:keys [id pronoun referent]} marks]
-     ^{:key id}
-     [:li (str "(" pronoun ", " referent ")")])])
+  [marks s-id add-mark-popup]
+  (if (= s-id (:s-id add-mark-popup))
+    [add-mark-popup-component add-mark-popup]
+    [:div
+     [:a.btn.btn-sm.btn-default
+      {:on-click #(show-add-mark-popup! s-id)}
+      [:i.fa.fa-plus]
+      " pronoun / referent"]
+     [:ul.b-marks
+      (for [{:keys [id pronoun referent]} marks]
+        ^{:key id}
+        [:li (str "(" pronoun " / " referent ")")])]]))
 
 (defn sentence-without-words
   [translation]
@@ -143,7 +192,7 @@
     [sentence-without-words translation]))
 
 (defn tale-editor
-  [{:keys [name author text-lines]}]
+  [ui {:keys [name author text-lines]}]
   [:table.table
    {:style {:table-layout "fixed"}}
    [:thead
@@ -154,19 +203,19 @@
     (for [{:keys [id words marks translation]} text-lines]
       ^{:key id}
       [:tr
-       [:td [marks-component (db/select marks)]]
+       [:td [marks-component (db/select marks) id (:add-mark-popup ui)]]
        [:td [sentence-component (db/select words) translation]]])]])
 
 (defn tales-component
-  [tales current-tale]
+  [ui tales current-tale ]
   (when (seq tales)
     [:div
      [tale-header-component current-tale]
      [:hr]
-     [tale-editor current-tale]]))
+     [tale-editor ui current-tale]]))
 
 (defn header
-  [{:keys [file-name current-tale-index]} {:keys [total-problems]} tales]
+  [{:keys [file-name current-tale-index]} {:keys [total-problems] :as data} tales]
   [:div.page-header
    {:style {:margin-top default-margin}}
    (if file-name
@@ -180,15 +229,17 @@
       [:div.alert.alert-warning.m-alert-left-navbar
        (str total-problems " истории с ошибками!")]])
    [:div.pull-right
-    [:a.btn.btn-sm.btn-default
-     {:on-click save-app!}
-     [:span.fa.fa-save]
-     " Сохранить"]
-    [:a.btn.btn-sm.btn-warning
-     {:on-click load-app!
-      :style {:margin-left default-margin}}
-     [:span.fa.fa-download]
-     " Загрузить"]]
+    (if (empty? data)
+      [:a.btn.btn-sm.btn-warning
+       {:on-click load-app!
+        :style {:margin-left default-margin}}
+       [:span.fa.fa-download]
+       " Загрузить"]
+      [:a.btn.btn-sm.btn-default
+       {:on-click save-app!
+        :style {:margin-left default-margin}}
+       [:span.fa.fa-save]
+       " Сохранить"])]
    [:div.clearfix]])
 
 (defn home-page []
@@ -198,7 +249,7 @@
     [:div.container.m-card
      [header ui data tales]
      [debug-state]
-     [tales-component tales current-tale]]))
+     [tales-component ui tales current-tale]]))
 
 ;; -------------------------
 ;; Initialize app

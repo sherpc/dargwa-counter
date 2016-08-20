@@ -16,6 +16,8 @@ div.b-words {
 
 ul.b-marks {
     width: 150px;
+    margin-top: 5px;
+    padding-left: 20px;
 }
 
 div.m-card {
@@ -37,4 +39,9 @@ div.m-alert-left-navbar {
     margin-bottom: 0;
     padding: 5px;
     height: 30px;
+}
+
+input.m-mark-input {
+    width: 100%;
+    margin-bottom: 5px;
 }
