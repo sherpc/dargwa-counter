@@ -65,14 +65,15 @@
 (defn header
   [file-name]
   [:div.page-header
-   {:style {:margin-top 0}}
-   [:h1 "Dargwa language counter app"]
-   [:p.pull-left [upload-btn file-name]]
+   {:style {:margin-top "15px"}}
+   [:div.pull-left
+    {:style {:padding-top "5px"}}
+    [upload-btn file-name]]
    [:div.pull-right
-    [:a.btn.btn-xs.btn-success
+    [:a.btn.btn-sm.btn-success
      {:on-click save-app!}
      "Save"]
-    [:a.btn.btn-xs.btn-danger
+    [:a.btn.btn-sm.btn-danger
      {:on-click load-app!
       :style {:margin-left "10px"}}
      "Load"]]
@@ -139,7 +140,7 @@
    {:style {:table-layout "fixed"}}
    [:thead
     [:tr
-     [:th 
+     [:th
       {:style {:width "200px"}}
       "Отметки"]
      [:th "Слова и полный перевод"]]]
@@ -151,6 +152,7 @@
         [marks-component marks]]
        [:td
         [:div
+         {:style {:overflow-x "scroll"}}
          [words-component words]
          translation]]])]])
 
@@ -167,7 +169,7 @@
        [tale-editor current-tale]])))
 
 (defn home-page []
-  [:div.container
+  [:div.container.m-card
    [header (:file-name @app)]
    [tales-component @app]
    [debug-state]])
