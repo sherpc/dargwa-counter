@@ -76,6 +76,19 @@
 (defn remove-mark!
   [s-id m-id]
   (swap! app db/remove-mark s-id m-id))
+
+(defn select-word!
+  [s-id w-id]
+  (swap! app db/select-word s-id w-id))
+
+(defn mark-pronoun!
+  [selected-word]
+  (swap! app db/mark-pronoun selected-word))
+
+(defn unmark-pronoun!
+  []
+  (swap! app db/unmark-pronoun))
+
 ;; -------------------------
 ;; Views
 
@@ -125,25 +138,37 @@
      [:div.alert.alert-warning.m-alert-without-bottom-margin
       (str "В тексте есть " problems " предложений без слов.")])])
 
+(defn css-classes
+  [preds-with-css]
+  (->> preds-with-css
+       (filter first)
+       (map second)
+       (clojure.string/join " ")))
+
+(defn words-one-lang
+  [{:keys [selected-word]} words s-id td-key w-key]
+  [:tr
+   (for [{:keys [part-of-speech id] :as w} words
+         :let [text (w-key w)
+               is-selected? (= selected-word {:s-id s-id :w-id id})
+               is-predicate? (= part-of-speech :predicate)
+               preds [[is-predicate? "m-word-predicate"]
+                      [is-selected? "text-success bg-warning"]]
+               css (css-classes preds)]]
+     ^{:key id}
+     [td-key
+      {:class css
+       :on-click #(select-word! s-id id)}
+      text]
+     )])
+
 (defn words-component
-  [words]
+  [ui words s-id]
   [:table.table.table-bordered.table-words
    [:thead
-    [:tr
-     (for [{:keys [dargwa part-of-speech id]} words]
-       ^{:key id}
-       [:th
-        {:class (when (= part-of-speech :predicate) "m-predicate")}
-        dargwa]
-       )]]
+    [words-one-lang ui words s-id :th :dargwa]]
    [:tbody
-    [:tr
-     (for [{:keys [translation part-of-speech id]} words]
-       ^{:key id}
-       [:td
-        {:class (when (= part-of-speech :predicate) "m-predicate")}
-        translation]
-       )]]])
+    [words-one-lang ui words s-id :td :translation]]])
 
 (defn add-mark-popup-component
   [{:keys [s-id pronoun referent]}]
@@ -162,20 +187,69 @@
     {:on-click add-mark!}
     "Добавить"]])
 
+(defn mark-as-pronoun
+  [selected-word]
+  [:a.btn.btn-sm.btn-default
+   {:on-click #(mark-pronoun! selected-word)}
+   [:i.fa.fa-plus]
+   " mark as pronoun"])
+
+(defn cancel-mark-ref-btn
+  []
+  [:a.btn.btn-sm.btn-default
+   {:on-click unmark-pronoun!}
+   [:i.fa.fa-times]
+   " cancel"])
+
+(defn mark-as-ref-btns
+  []
+  [:div.clearfix
+   [:div.pull-left
+    [cancel-mark-ref-btn]]
+   [:div.pull-right
+    [:a.btn.btn-sm.btn-success
+     {:on-click add-mark!}
+     [:i.fa.fa-check]
+     " add referent"]]])
+
+(defn pls-mark-ref
+  []
+  [:div
+   [:p "now select a referent"]
+   [cancel-mark-ref-btn]])
+
+(defn error-ref-mark
+  []
+  [:div
+   [:p.text-danger "can't select referent that is after pronoun"]
+   [cancel-mark-ref-btn]])
+
+(defn word-actions-bar
+  [{:keys [selected-word add-pronoun]} s-id]
+  (let [{:keys [pronoun]} add-pronoun
+        s-is-pronoun? (= s-id (:s-id pronoun))]
+    (if add-pronoun
+      (cond
+        (and s-is-pronoun? (= selected-word pronoun)) [error-ref-mark]
+        (and s-is-pronoun? (nil? selected-word)) [pls-mark-ref]
+        (= s-id (:s-id selected-word)) (if (db/w> pronoun selected-word)
+                                         [mark-as-ref-btns]
+                                         [error-ref-mark])
+        )
+      (when (= s-id (:s-id selected-word))
+        [mark-as-pronoun selected-word]))))
+
 (defn marks-component
-  [marks s-id add-mark-popup]
+  [{:keys [add-mark-popup] :as ui} marks s-id]
   (if (= s-id (:s-id add-mark-popup))
     [add-mark-popup-component add-mark-popup]
     [:div
-     [:a.btn.btn-sm.btn-default
-      {:on-click #(show-add-mark-popup! s-id)}
-      [:i.fa.fa-plus]
-      " pronoun / referent"]
+     [word-actions-bar ui s-id]
      [:ul.b-marks
       (for [{:keys [id pronoun referent]} marks]
         ^{:key id}
         [:li (str "(" pronoun " / " referent ")")
-         [:span
+         #_[:span
           [:a.btn.btn-xs.text-danger
            {:on-click #(remove-mark! s-id id)}
            [:i.fa.fa-times]]]])]]))
@@ -190,11 +264,11 @@
     [:p (clojure.string/join ", " (filter p/russian-letters translation))]]])
 
 (defn sentence-component
-  [words translation]
+  [ui words s-id translation]
   (if (seq words)
     [:div
      {:style {:overflow-x "scroll"}}
-     [words-component words]
+     [words-component ui words s-id]
      translation]
     [sentence-without-words translation]))
 
@@ -210,8 +284,8 @@
     (for [{:keys [id words marks translation]} text-lines]
       ^{:key id}
       [:tr
-       [:td [marks-component (db/select marks) id (:add-mark-popup ui)]]
-       [:td [sentence-component (db/select words) translation]]])]])
+       [:td [marks-component ui (db/select marks) id]]
+       [:td [sentence-component ui (db/select words) id translation]]])]])
 
 (defn tales-component
   [ui tales current-tale ]

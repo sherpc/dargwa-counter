@@ -4,6 +4,7 @@
 
 (def default-ui {:file-name nil
                  :current-tale-index 0
+                 :selected-word nil
                  :add-mark-popup nil})
 
 (def default-app {:ui default-ui :data {}})
@@ -60,3 +61,30 @@
 (defn remove-mark
   [{:keys [ui] :as app} s-id m-id]
   (update-in app [:data :tales (:current-tale-index ui) :text-lines s-id :marks] dissoc m-id))
+
+(defn select-word
+  [app s-id w-id]
+  (assoc-in app [:ui :selected-word] {:s-id s-id :w-id w-id}))
+
+(defn clear-word-selection
+  [app]
+  (assoc-in app [:ui :selected-word] nil))
+
+(defn mark-pronoun
+  [app selected-word]
+  (-> app
+      clear-word-selection
+      (assoc-in [:ui :add-pronoun] {:pronoun selected-word})))
+
+(defn unmark-pronoun
+  [app]
+  (-> app
+      clear-word-selection
+      (assoc-in [:ui :add-pronoun] nil)))
+
+(defn w>
+  [{s1 :s-id w1 :w-id} {s2 :s-id w2 :w-id}]
+  (case (compare s1 s2)
+    -1 false
+    0 (> w1 w2)
+    1 true))

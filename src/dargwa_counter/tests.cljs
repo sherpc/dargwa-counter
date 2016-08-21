@@ -38,5 +38,9 @@
 ;;(log (p/add-line parsed (nth input-lines 1)))
 ;;(log (p/parse-text input-lines))
 
+(assert (db/w> {:s-id 1 :w-id 1} {:s-id 0 :w-id 2}))
+(assert (not (db/w> {:s-id 0 :w-id 1} {:s-id 0 :w-id 2})))
+(assert (not (db/w> {:s-id 0 :w-id 2} {:s-id 1 :w-id 1})))
+
 (.info js/console "All tests passed.")
 
