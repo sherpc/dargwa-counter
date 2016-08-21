@@ -146,14 +146,17 @@
        (clojure.string/join " ")))
 
 (defn words-one-lang
-  [{:keys [selected-word]} words s-id td-key w-key]
+  [{:keys [selected-word add-pronoun]} words s-id td-key w-key]
   [:tr
    (for [{:keys [part-of-speech id] :as w} words
          :let [text (w-key w)
-               is-selected? (= selected-word {:s-id s-id :w-id id})
+               w-id {:s-id s-id :w-id id}
+               is-selected? (= w-id selected-word)
                is-predicate? (= part-of-speech :predicate)
+               is-pronoun? (= w-id (:pronoun add-pronoun))
                preds [[is-predicate? "m-word-predicate"]
-                      [is-selected? "text-success bg-warning"]]
+                      [is-selected? "text-success bg-warning"]
+                      [is-pronoun? "bg-success"]]
                css (css-classes preds)]]
      ^{:key id}
      [td-key
