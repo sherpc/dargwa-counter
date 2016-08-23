@@ -36,7 +36,8 @@
 
 (defn on-readed
   [e]
-  (let [text (event-value e)]
+  (let [text (-> e .-target .-result)]
+    (.info js/console "readed file")
     (swap! app assoc :data (p/parse-file text))))
 
 (defn put-upload
@@ -53,29 +54,9 @@
   []
   (reset! app db/default-app))
 
-(defn set-current-tale-index
+(defn set-current-tale-index!
   [id]
-  (swap! app assoc-in [:ui :current-tale-index] id))
-
-(defn show-add-mark-popup!
-  [s-id]
-  (swap! app db/show-add-mark-popup s-id))
-
-(defn add-mark!
-  []
-  (swap! app db/add-mark))
-
-(defn close-add-mark-popup!
-  []
-  (swap! app db/close-add-mark-popup))
-
-(defn change-add-mark-text!
-  [k v]
-  (swap! app db/change-add-mark-text k v))
-
-(defn remove-mark!
-  [s-id m-id]
-  (swap! app db/remove-mark s-id m-id))
+  (swap! app db/set-current-tale-index id))
 
 (defn select-word!
   [s-id w-id]
@@ -88,6 +69,14 @@
 (defn unmark-pronoun!
   []
   (swap! app db/unmark-pronoun))
+
+(defn add-referent!
+  []
+  (swap! app db/add-referent))
+
+(defn change-pronoun-name!
+  [new-name]
+  (swap! app db/change-pronoun-name new-name))
 
 ;; -------------------------
 ;; Views
@@ -114,15 +103,15 @@
        {:style {:white-space "pre-wrap"}}
        (with-out-str (cljs.pprint/pprint (get (:tales @app) (:current-tale-index @app))))
        ]
-    [:pre
+    #_[:pre
      {:style {:white-space "pre-wrap"}}
-     (with-out-str (cljs.pprint/pprint dbg))]]))
+     (str dbg)]]))
 
 (defn tales-menu
   [tales current-tale-index]
   [:select.form-control
    {:style {:width "auto" :height "30px"}
-    :on-change #(set-current-tale-index (-> % .-target .-value js/parseInt))
+    :on-change #(set-current-tale-index! (-> % .-target .-value js/parseInt))
     :value current-tale-index}
    (for [{:keys [id name problems]} tales
          :let [has-problems? (pos? problems)]]
@@ -130,9 +119,9 @@
      [:option {:value id} (str name (when has-problems? " (!)"))])])
 
 (defn tale-header-component
-  [{:keys [name author problems]}]
+  [{:keys [name author problems pronouns]}]
   [:div
-   [:h3 {:style {:margin-top 0}} name]
+   [:h3 {:style {:margin-top 0}} name " " [:span.badge (count pronouns)]]
    [:h5 author]
    (when (> problems 0)
      [:div.alert.alert-warning.m-alert-without-bottom-margin
@@ -173,29 +162,17 @@
    [:tbody
     [words-one-lang ui words s-id :td :translation]]])
 
-(defn add-mark-popup-component
-  [{:keys [s-id pronoun referent]}]
-  [:div
-   [:input.form-control.input-sm.m-mark-input
-    {:placeholder "pronoun"
-     :on-change #(change-add-mark-text! :pronoun (event-value %))}]
-   [:input.form-control.input-sm.m-mark-input
-    {:placeholder "referent"
-     :on-change #(change-add-mark-text! :referent (event-value %))}]
-   [:a.btn.btn-sm.btn-default.pull-left
-    {:on-click close-add-mark-popup!}
-    [:i.fa.fa-arrow-left]
-    " Назад"]
-   [:a.btn.btn-sm.btn-success.pull-right
-    {:on-click add-mark!}
-    "Добавить"]])
-
 (defn mark-as-pronoun
   [selected-word]
-  [:a.btn.btn-sm.btn-default
-   {:on-click #(mark-pronoun! selected-word)}
-   [:i.fa.fa-plus]
-   " mark as pronoun"])
+  [:div.clearfix
+   [:input.form-control.input-sm
+    {:style {:margin-bottom default-margin}
+     :on-change #(change-pronoun-name! (event-value %))
+     :placeholder "pronoun name"}]
+   [:a.btn.btn-sm.btn-default.pull-right
+    {:on-click #(mark-pronoun! selected-word)}
+    [:i.fa.fa-plus]
+    " mark as pronoun"]])
 
 (defn cancel-mark-ref-btn
   []
@@ -211,7 +188,7 @@
     [cancel-mark-ref-btn]]
    [:div.pull-right
     [:a.btn.btn-sm.btn-success
-     {:on-click add-mark!}
+     {:on-click add-referent!}
      [:i.fa.fa-check]
      " add referent"]]])
 
@@ -243,19 +220,17 @@
         [mark-as-pronoun selected-word]))))
 
 (defn marks-component
-  [{:keys [add-mark-popup] :as ui} marks s-id]
-  (if (= s-id (:s-id add-mark-popup))
-    [add-mark-popup-component add-mark-popup]
-    [:div
-     [word-actions-bar ui s-id]
-     [:ul.b-marks
-      (for [{:keys [id pronoun referent]} marks]
-        ^{:key id}
-        [:li (str "(" pronoun " / " referent ")")
-         #_[:span
+  [ui marks s-id]
+  [:div
+   [word-actions-bar ui s-id]
+   [:ul.b-marks
+    (for [{:keys [id pronoun referent]} marks]
+      ^{:key id}
+      [:li (str "(" pronoun " / " referent ")")
+       #_[:span
           [:a.btn.btn-xs.text-danger
            {:on-click #(remove-mark! s-id id)}
-           [:i.fa.fa-times]]]])]]))
+           [:i.fa.fa-times]]]])]])
 
 (defn sentence-without-words
   [translation]
@@ -299,7 +274,7 @@
      [tale-editor ui current-tale]]))
 
 (defn header
-  [{:keys [file-name current-tale-index]} {:keys [total-problems] :as data} tales]
+  [{:keys [file-name current-tale-index]} {:keys [total-problems] :as data} csv-export-uri tales]
   [:div.page-header
    {:style {:margin-top default-margin}}
    (if file-name
@@ -308,7 +283,7 @@
      [:div.pull-left
       {:style {:padding-top "5px"}}
       [upload-btn file-name]])
-   (when total-problems
+   (when (and total-problems (> total-problems 0))
      [:div.pull-left
       [:div.alert.alert-warning.m-alert-left-navbar
        (str total-problems " истории с ошибками!")]])
@@ -319,19 +294,25 @@
         :style {:margin-left default-margin}}
        [:span.fa.fa-download]
        " Загрузить"]
-      [:a.btn.btn-sm.btn-default
-       {:on-click save-app!
-        :style {:margin-left default-margin}}
-       [:span.fa.fa-save]
-       " Сохранить"])]
+      [:div 
+       [:a.btn.btn-sm.btn-success
+        {:href csv-export-uri
+         :download "report.csv"}
+        [:i.fa.fa-file-excel-o]
+        " Отчет"]
+       [:a.btn.btn-sm.btn-default
+        {:on-click save-app!
+         :style {:margin-left default-margin}}
+        [:span.fa.fa-save]
+        " Сохранить"]])]
    [:div.clearfix]])
 
 (defn home-page []
-  (let [{:keys [ui data]} @app
+  (let [{:keys [ui data csv-export-uri]} @app
         tales (-> data :tales db/select)
         current-tale (db/get-current-tale ui data)]
     [:div.container.m-card
-     [header ui data tales]
+     [header ui data csv-export-uri tales]
      [debug-state]
      [tales-component ui tales current-tale]]))
 
